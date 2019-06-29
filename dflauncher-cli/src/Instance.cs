@@ -27,7 +27,9 @@ namespace dflaunchercli
         
         public void CreateJson(object instance) {
             JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(new JsonTextWriter(new StreamWriter(name + ".json")), instance);
+			serializer.Serialize(new JsonTextWriter(new StreamWriter(name + ".json")), instance);
         }
+
+
     }
 }
