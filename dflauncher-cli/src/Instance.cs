@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using Newtonsoft.Json;
+using SharpCompress;
+using System.Runtime.InteropServices;
+
 namespace dflaunchercli
 {
 	public class Instance 
@@ -32,12 +35,33 @@ namespace dflaunchercli
 			serializer.Serialize(new JsonTextWriter(new StreamWriter(name + ".json")), instance);
         }
 
+		public void CreateJson(string dir) {
+            //will attempt to rebuild Json from directory and game info
+		}
+
 		public void SetupInstance()
 		{
+			var linuxGame = directory + "/game/game.tar.bz2";
+			var windowsGame = directory + "/game/game.tar.zip";
+			var os = Environment.OSVersion.Platform;
+
 			Console.WriteLine("Downloading {0} from http://www.bay12games.com/dwarves/", version);
-			Download.downloadGame(version, directory);
+
+			if (os == PlatformID.Unix) Download.DownloadGameLinux(version, directory);
+			if (os == PlatformID.Win32NT) Download.DownloadGameWindows(version, directory);
+			
 			while(!Download.downloadFinished) {
 				Console.Write(Download.downloadProgress);
+			}
+
+			if (os == PlatformID.Unix && File.Exists(linuxGame)) {
+				using (Stream s = File.OpenRead(linuxGame)) {
+
+				}
+			}
+
+			if (os == PlatformID.Win32NT && File.Exists(directory + "/game/game.zip")) {
+                //unzip
 			}
 		}
 
@@ -52,5 +76,10 @@ namespace dflaunchercli
 				Console.WriteLine("Failed to remove instance");
 			}
 		}
+
+		public void LaunchInstance(string instance) //possibly implement File json as input instead
+		{ 
+
+		}    
     }
 }

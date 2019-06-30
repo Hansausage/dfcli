@@ -26,9 +26,12 @@ namespace dflaunchercli
 				{
 					if (args[i] == "-n") name = args[i + 1];
 					if (args[i] == "-v") ver = args[i + 1];
-					if (args[i] == "dfhack") isDfHack = true;
+					if (args[i] == Args.help) {
+						Args.PrintDoc();
+					}
 				}
 
+				Console.WriteLine("Name: {0} Version: {1}", name, ver);
 				newInstance = new Instance(name, ver, isDfHack);
 			}         
 		}
