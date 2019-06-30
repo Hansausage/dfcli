@@ -1,0 +1,2 @@
+﻿#!/bin/bash
+mono ~/Projects/dflauncher-cli/dflauncher-cli/bin/Debug/dfcli.exe "$@"

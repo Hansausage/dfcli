@@ -12,9 +12,11 @@ namespace dflaunchercli
 			Instance newInstance = new Instance();
 			if (args == null || args.Length == 0)
 			{
-				foreach (string dir in Directory.GetDirectories(Directory.GetCurrentDirectory() + "/instances/"))
+				DirectoryInfo d;
+				foreach (string dir in Directory.GetDirectories(newInstance.instancesDirectory + "/"))
 				{
-					Console.WriteLine(Directory.GetParent(dir));
+					d = new DirectoryInfo(dir);
+					Console.WriteLine(d.Name);
 				}
 				Console.WriteLine("No arguments passed, for help run dfcli -h");
 			}

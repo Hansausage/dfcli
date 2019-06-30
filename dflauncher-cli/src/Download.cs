@@ -10,7 +10,14 @@ namespace dflaunchercli
     {
 		public static int downloadProgress { get; set; }
         public static bool downloadFinished { get; set; }
-        public static Dictionary<string, string> dfversions = new Dictionary<string, string>() {
+
+        public static Dictionary<string, string> dfversionsWindows = new Dictionary<string, string>() {
+            {"0.44.12","http://www.bay12games.com/dwarves/df_44_12_win.zip"},
+            {"0.44.11","http://www.bay12games.com/dwarves/df_44_11_win.zip"},
+            {"0.44.10","http://www.bay12games.com/dwarves/df_44_10_win.zip"},
+        };
+
+		public static Dictionary<string, string> dfversionsLinux = new Dictionary<string, string>() {
             {"0.44.12","http://www.bay12games.com/dwarves/df_44_12_win.zip"},
             {"0.44.11","http://www.bay12games.com/dwarves/df_44_11_win.zip"},
             {"0.44.10","http://www.bay12games.com/dwarves/df_44_10_win.zip"},
@@ -21,7 +28,7 @@ namespace dflaunchercli
             WebClient dl = new WebClient();
             dl.DownloadProgressChanged += dl_DownloadProgressChanged;
             dl.DownloadFileCompleted += dl_DownloadFileCompleted;
-            dl.DownloadFileAsync(new Uri(dfversions[version]), directory + "/game/" + "/game.zip");
+            dl.DownloadFileAsync(new Uri(dfversionsWindows[version]), directory + "/game/" + "/game.zip");
         }
 
         public static void dl_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
