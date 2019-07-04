@@ -33,8 +33,14 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="SharpCompress">
-      <HintPath>..\packages\SharpCompress.0.23.0\lib\net45\SharpCompress.dll</HintPath>
+    <Reference Include="I18N" />
+    <Reference Include="I18N.CJK" />
+    <Reference Include="I18N.MidEast" />
+    <Reference Include="I18N.Other" />
+    <Reference Include="I18N.Rare" />
+    <Reference Include="I18N.West" />
+    <Reference Include="ICSharpCode.SharpZipLib">
+      <HintPath>..\packages\SharpZipLib.1.1.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +49,7 @@
     <Compile Include="src\Instance.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Args.cs" />
+    <Compile Include="src\Files.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -1,14 +1,16 @@
 ﻿using System;
 namespace dflaunchercli
 {
-    public struct Args
-    {
+	public struct Args
+	{
 		public const string name_new = "-n";
 		public const string version = "-v";
 		public const string help = "-h"; 
 		public const string dfhack = "--dfhack"; 
 		public const string verbose = "--verbose"; //unimplemented
 		public const string rename = "-r"; //unimplemented
+		public const string remove = "-rm";
+		public const string package = "-p";
 
 		public static void PrintDoc() {
 			Console.Write(

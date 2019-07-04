@@ -1,85 +1,103 @@
 ﻿using System;
 using System.IO;
+using System.Diagnostics;
 using Newtonsoft.Json;
-using SharpCompress;
 using System.Runtime.InteropServices;
-
+using ICSharpCode.SharpZipLib.BZip2;
+using ICSharpCode.SharpZipLib.Tar;
 namespace dflaunchercli
 {
+	[JsonObject(MemberSerialization.OptIn)]
 	public class Instance 
     {
-		public string name;
-        public string version { get; set; }
-        public bool dfhack { get; set; }
-        public string execPath { get; set; }
-        public string directory { get; set; }
-		public string instancesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dfcli/instances");
+		[JsonProperty]
+		private string name { get; set; }
 
-        public Instance(string name, string version, bool dfhack)
+		[JsonProperty]
+        private string version { get; set; }
+
+		[JsonProperty]
+        private string execPath { get; set; }
+
+        [JsonProperty]
+        private string directory { get; set; }
+
+		[JsonProperty]
+        private readonly PlatformID os = Environment.OSVersion.Platform;
+        
+        private bool dfhack { get; set; }      
+		private readonly string instancesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dfcli/instances");
+              
+		public Instance(string name, string version)
         {
             this.name = name;
             this.version = version;
-            this.dfhack = dfhack;
 			directory = instancesDirectory + "/" + name;
-            execPath = directory + "/df";
-			Directory.CreateDirectory(directory);
-			Console.WriteLine("New instance created.");
+			if (os == PlatformID.Unix) execPath = directory + "/game/df";
+			if (os == PlatformID.Win32NT) execPath = directory + "/game/Dwarf Fortress.exe";
         }
 
-		public Instance() {
+		public Instance() 
+		{
 			if (!Directory.Exists(instancesDirectory)) Directory.CreateDirectory(instancesDirectory);
 		}
         
-        public void CreateJson(object instance) {
-            JsonSerializer serializer = new JsonSerializer();
-			serializer.Serialize(new JsonTextWriter(new StreamWriter(name + ".json")), instance);
-        }
-
-		public void CreateJson(string dir) {
-            //will attempt to rebuild Json from directory and game info
-		}
-
-		public void SetupInstance()
+		public string GetInstancesDirectory() 
 		{
-			var linuxGame = directory + "/game/game.tar.bz2";
-			var windowsGame = directory + "/game/game.tar.zip";
-			var os = Environment.OSVersion.Platform;
-
-			Console.WriteLine("Downloading {0} from http://www.bay12games.com/dwarves/", version);
-
-			if (os == PlatformID.Unix) Download.DownloadGameLinux(version, directory);
-			if (os == PlatformID.Win32NT) Download.DownloadGameWindows(version, directory);
-			
-			while(!Download.downloadFinished) {
-				Console.Write(Download.downloadProgress);
-			}
-
-			if (os == PlatformID.Unix && File.Exists(linuxGame)) {
-				using (Stream s = File.OpenRead(linuxGame)) {
-
+			return instancesDirectory;
+		}
+              
+        public void LaunchInstance(string name) 
+		{
+			if (Files.Exists(name)) {
+				using (Process p = new Process()) {
+					p.StartInfo.RedirectStandardOutput = true;
+					p.StartInfo.UseShellExecute = false;
+					p.StartInfo.FileName = execPath;
 				}
 			}
+		}
+        
+		public void SetupInstance(object instance)
+		{
+			Console.WriteLine("Platform ID is {0}", os);
+			Console.WriteLine("Setting up instance {0}", name);
 
-			if (os == PlatformID.Win32NT && File.Exists(directory + "/game/game.zip")) {
+			Directory.CreateDirectory(directory + "/game/");
+
+			var linuxGame = directory + "/game/game.tar.bz2";
+			var windowsGame = directory + "/game/game.zip";
+			var jsonFile = directory + "/" + name + ".json";
+			var tarball = directory + "/game/game.tar";
+          
+			Console.WriteLine("Downloading {0} from http://www.bay12games.com/dwarves/ to {1}", version, linuxGame);
+
+			if (os == PlatformID.Unix) Download.DownloadGameLinux(version, linuxGame);
+			if (os == PlatformID.Win32NT) Download.DownloadGameWindows(version, windowsGame);
+
+			if (os == PlatformID.Unix && File.Exists(linuxGame)) 
+			{
+				Console.WriteLine("Decompressing {0}", linuxGame);
+				Files.DecompressBz2(linuxGame, tarball);
+				File.Delete(linuxGame);
+
+				Console.WriteLine("Untar {0}", tarball);
+				Files.Untar(tarball, directory + "/game/");
+				File.Delete(tarball);            
+			}
+            
+
+			if (os == PlatformID.Win32NT && File.Exists(windowsGame)) 
+			{
                 //unzip
 			}
+
+			Console.WriteLine("Generate {0}", jsonFile);
+			Files.CreateJsonFromObject(jsonFile, instance);
+
+			Console.Write("Instance created.\n" +
+						  "Run dfcli {0} to start instance\n", name
+						 );
 		}
-
-		public void DeleteInstance(object instance) {
-            //
-		}
-
-		public void DeleteInstance(string dir) {
-			try {
-				Directory.Delete(dir);
-			} catch(IOException) {
-				Console.WriteLine("Failed to remove instance");
-			}
-		}
-
-		public void LaunchInstance(string instance) //possibly implement File json as input instead
-		{ 
-
-		}    
     }
 }
