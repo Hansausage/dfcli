@@ -5,19 +5,17 @@ namespace dflaunchercli
 {
 	class MainClass
 	{
-		public static void Main(string[] args) {
-			string name = "dnc";
-			string ver = "dnv";
-			//bool isDfHack = false;
-			string[] copyArgs = new string[100];
-			Instance newInstance = new Instance();
+		public static void Main(string[] args)
+		{
+			var name = "";
+			var ver = "";
+			var _create = false;
+
 			if (args == null || args.Length == 0)
 			{
-				DirectoryInfo d;
-				foreach (string dir in Directory.GetDirectories(newInstance.GetInstancesDirectory() + "/"))
+				foreach (string instance in Files.GetInstances())
 				{
-					d = new DirectoryInfo(dir);
-					Console.WriteLine(d.Name);
+					Console.WriteLine(instance);
 				}
 				Console.WriteLine("No arguments passed, for help run dfcli -h");
 			}
@@ -25,31 +23,53 @@ namespace dflaunchercli
 			{
 				for (int i = 0; i < args.Length; i++)
 				{
-					if (args[i] == Args.name_new) {
-						name = args[i + 1];
-						copyArgs[i] = name;
-					}
-					if (args[i] == Args.version) {
-						ver = args[i + 1];
-						copyArgs[i] = ver;
-					}
-					if (args[i] == Args.help) {
-						Args.PrintDoc();
+					switch (args[i])
+					{
+						case Args.name_new:
+							name = args[i + 1];
+							_create = true;
+							break;
+						case Args.version:
+							ver = args[i + 1];
+							break;
+						case Args.help:
+							Args.PrintDoc();
+							break;
+						case Args.remove:
+							Console.Write("type instance name again to confirm: ");
+							string c = Console.ReadLine();
+							if (c == args[i + 1]) Files.DeleteInstance(args[i + 1]);
+							Console.WriteLine("Deleted instance {0}", c);
+							break;
+						case Args.dfhack:
+							break;
+						case Args.rename:
+							break;
+						case Args.package:
+							break;
+						case Args.detailed:
+							new Instance().ListDetailedInstances();
+							break;
+						default:
+							if (args[i] == Files.Matches(args[i]))
+							{
+								Console.WriteLine("Launching instance {0}", args[i]);
+								Instance instance = new Instance(args[i]);
+								instance.LaunchInstance(args[i]);
+							}
+							else if (!_create)
+							{
+								Console.WriteLine("Invalid operation, use dfcli -h for help.");
+							}
+							break;
 					}
 				}
-
-				for (int i = 0; i < copyArgs.Length; i++) {
-					if (copyArgs[i] == null) break;
-					if (copyArgs[i] == Files.Matches(copyArgs[i]))
-                    {
-                        newInstance.LaunchInstance(copyArgs[i]);
-                    }
-					if (copyArgs[i] == "dnc") break;
-					if (copyArgs[i] == "dnv") break;               
-					newInstance = new Instance(name, ver);
-					newInstance.SetupInstance(newInstance);               
-				}
-			}         
+			}
+			if (_create)
+			{
+				var instance = new Instance(name, ver);
+				instance.SetupInstance(instance);
+			}
 		}
 	}
 }

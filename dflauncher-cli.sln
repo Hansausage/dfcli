@@ -1,7 +1,7 @@
 
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dflauncher-cli", "dflauncher-cli\dflauncher-cli.csproj", "{D1AEB6A4-FE24-475D-89D4-4B26A2C935AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dfcli", "dflauncher-cli\dfcli.csproj", "{D1AEB6A4-FE24-475D-89D4-4B26A2C935AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

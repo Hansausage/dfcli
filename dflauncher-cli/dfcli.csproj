@@ -54,7 +54,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="dfcli" />
-    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\" />
