@@ -1,7 +1,7 @@
 ﻿## dfcli
 ### command line tool for managing installations (instances) of dwarf fortress for Linux/Windows
 
-create new simple instance of dwarf fortress: `dfcli -n myinstance`
+create new simple instance of dwarf fortress: `dfcli -n myinstance -v 0.44.12`
 
 launch an instance: `dfcli myinstance`
 
